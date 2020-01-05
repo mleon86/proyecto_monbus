@@ -10,7 +10,7 @@ class Bus_geo(models.Model):
 	time = models.CharField(max_length = 100, blank = False, null = False)
 
 	class Meta:
-		verbose_name = 'bus_geo'
+		verbose_name = 'Bus_geo'
 		verbose_name_plural = 'bus_geo_ubicaciones'
 		ordering = ['viaje']
 
