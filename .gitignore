@@ -1,5 +1,10 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+api_bus/__pycache__/
+api_parada/__pycache__/
+carga/__pycache__/
+monbus/__pycache__/
+
 *.py[cod]
 *$py.class
 
