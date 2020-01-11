@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+*.__pycache__/
 api_bus/__pycache__/
 api_parada/__pycache__/
 carga/__pycache__/
