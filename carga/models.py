@@ -80,7 +80,34 @@ class Bus(models.Model):
 		ordering = ['chapa', 'empresa_id']
 
 	def __str__(self):
-		return self.nombre
+		return self.chapa
+
+class RaspberryBus(models.Model):
+	id = models.AutoField(primary_key = True)
+	serial = models.CharField(max_length = 50, blank = False, null = False)
+	bus_id = models.OneToOneField(Bus, on_delete = models.CASCADE)
+
+	class Meta:
+		verbose_name = 'RaspberryBus'
+		verbose_name_plural = 'RaspberrysBuses'
+		ordering = ['serial']
+
+	def __str__(self):
+		return self.serial
+
+class RaspberryParada(models.Model):
+	id = models.AutoField(primary_key = True)
+	serial = models.CharField(max_length = 50, blank = False, null = False)
+	parada_id = models.OneToOneField(Parada, on_delete = models.CASCADE)
+
+	class Meta:
+		verbose_name = 'RaspberryParada'
+		verbose_name_plural = 'RaspberrysParadas'
+		ordering = ['serial']
+
+	def __str__(self):
+		return self.serial
+
 
 #Datos de los choferes
 class Chofer(models.Model):
