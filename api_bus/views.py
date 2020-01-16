@@ -14,7 +14,7 @@ class Bus_DatosSave(generics.CreateAPIView):
 	serializer_class = Bus_DatosSerializer
 
 class RaspberryBusConsulta(generics.RetrieveAPIView):
-	permission_classes = () #permisos quitados temporalmente para prueba de la vista
+	permission_classes = (IsAuthenticated,) #permisos quitados temporalmente para prueba de la vista
 	serializer_class = RaspberryBusSerializer
 	queryset = RaspberryBus.objects.all()
 	lookup_field = 'serial'
