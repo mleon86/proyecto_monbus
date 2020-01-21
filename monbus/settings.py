@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django.contrib.gis',
     'carga',
     'api_bus',
     'api_parada',
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'monbus.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'monbus',
         'USER': 'ml',
         'PASSWORD': 'Kokito',

@@ -1,4 +1,4 @@
-from django.db import models
+from django.contrib.gis.db import models
 
 PAISES=(('PY','Paraguaya'),('AR',"Argentina"),('BR','Brasilera'),('BO','Boliviana'),('PE',"Peruana"),('CH','Chilena'))
 
@@ -7,16 +7,19 @@ PAISES=(('PY','Paraguaya'),('AR',"Argentina"),('BR','Brasilera'),('BO','Bolivian
 #Datos de las Paradas
 class Parada(models.Model):
 	id = models.AutoField(primary_key = True)
-	nro = models.CharField(max_length = 10, blank = False, null = False)
+	nombre = models.CharField(max_length = 10, blank = False, null = False)
 	direccion = models.CharField(max_length = 100, blank = False, null = False)
+	lon = models.FloatField()
+	lat = models.FloatField()
+	mpoly = models.PointField()
 
 	class Meta:
 		verbose_name = 'Parada'
 		verbose_name_plural = 'Paradas'
-		ordering = ['nro']
+		ordering = ['nombre']
 
 	def __str__(self):
-		return self.linea
+		return self.nombre
 
 
 
@@ -57,6 +60,7 @@ class Itinerario(models.Model):
 	nombre = models.CharField(max_length = 40, blank = False, null = False)
 	descripcion = models.TextField()
 	linea_id = models.ForeignKey(Linea, on_delete = models.CASCADE)
+	mpoly = models.LineStringField()
 
 	class Meta:
 		verbose_name = 'Itinerario'
