@@ -4,6 +4,7 @@ api_bus/__pycache__/
 api_parada/__pycache__/
 carga/__pycache__/
 monbus/__pycache__/
+monbus/carga/data
 
 *.py[cod]
 *$py.class
