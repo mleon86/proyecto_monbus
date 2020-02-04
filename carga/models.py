@@ -9,9 +9,7 @@ class Parada(models.Model):
 	id = models.AutoField(primary_key = True)
 	nombre = models.CharField(max_length = 10, blank = False, null = False)
 	direccion = models.CharField(max_length = 100, blank = False, null = False)
-	lon = models.FloatField()
-	lat = models.FloatField()
-	mpoly = models.PointField()
+	location_parada = models.PointField()
 
 	class Meta:
 		verbose_name = 'Parada'
@@ -76,8 +74,7 @@ class Bus(models.Model):
 	modelo = models.CharField(max_length = 50, blank = False, null = False)
 	chapa = models.CharField(max_length = 8, blank = False, null = False)
 	empresa_id = models.ForeignKey(Empresa, on_delete = models.CASCADE)
-
-
+	
 	class Meta:
 		verbose_name = 'Bus'
 		verbose_name_plural = 'Buses'
