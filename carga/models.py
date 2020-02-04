@@ -6,8 +6,7 @@ PAISES=(('PY','Paraguaya'),('AR',"Argentina"),('BR','Brasilera'),('BO','Bolivian
 
 #Datos de las Paradas
 class Parada(models.Model):
-	id = models.AutoField(primary_key = True)
-	nombre = models.CharField(max_length = 10, blank = False, null = False)
+	nombre = models.CharField(max_length = 10, blank = False, null = False, primary_key = True)
 	direccion = models.CharField(max_length = 100, blank = False, null = False)
 	location_parada = models.PointField()
 
@@ -39,8 +38,7 @@ class Empresa(models.Model):
 
 #Son la lineas de colectivo, pertenecientes a empresas
 class Linea(models.Model):
-	id = models.AutoField(primary_key = True)
-	nro = models.CharField(max_length = 200, blank = False, null = False)
+	nro = models.CharField(max_length = 200, blank = False, null = False, primary_key = True)
 	descripcion = models.CharField(max_length = 200, blank = False, null = False)
 	empresa_id = models.ForeignKey(Empresa, on_delete = models.CASCADE)
 
@@ -54,8 +52,7 @@ class Linea(models.Model):
 
 #Itinerarios: determinaran la ruta que recorre un determinada empresa
 class Itinerario(models.Model):
-	id = models.AutoField(primary_key = True)
-	nombre = models.CharField(max_length = 40, blank = False, null = False)
+	nombre = models.CharField(max_length = 40, blank = False, null = False, primary_key = True)
 	descripcion = models.TextField()
 	linea_id = models.ForeignKey(Linea, on_delete = models.CASCADE)
 	mpoly = models.LineStringField()
@@ -69,10 +66,9 @@ class Itinerario(models.Model):
 		return self.nombre
 
 class Bus(models.Model):
-	id = models.AutoField(primary_key = True)
 	marca = models.CharField(max_length = 50, blank = False, null = False)
 	modelo = models.CharField(max_length = 50, blank = False, null = False)
-	chapa = models.CharField(max_length = 8, blank = False, null = False)
+	chapa = models.CharField(max_length = 8, blank = False, null = False, primary_key = True)
 	empresa_id = models.ForeignKey(Empresa, on_delete = models.CASCADE)
 	
 	class Meta:
@@ -84,21 +80,19 @@ class Bus(models.Model):
 		return self.chapa
 
 class RaspberryBus(models.Model):
-	id = models.AutoField(primary_key = True)
-	serial = models.CharField(max_length = 50, blank = False, null = False)
+	serial_rasp_bus = models.CharField(max_length = 50, blank = False, null = False, primary_key = True)
 	bus_id = models.OneToOneField(Bus, on_delete = models.CASCADE)
 
 	class Meta:
 		verbose_name = 'RaspberryBus'
 		verbose_name_plural = 'RaspberrysBuses'
-		ordering = ['serial']
+		ordering = ['serial_rasp_bus']
 
 	def __str__(self):
-		return self.serial
+		return self.serial_rasp_bus
 
 class RaspberryParada(models.Model):
-	id = models.AutoField(primary_key = True)
-	serial = models.CharField(max_length = 50, blank = False, null = False)
+	serial = models.CharField(max_length = 50, blank = False, null = False, primary_key = True)
 	parada_id = models.OneToOneField(Parada, on_delete = models.CASCADE)
 
 	class Meta:
@@ -112,10 +106,9 @@ class RaspberryParada(models.Model):
 
 #Datos de los choferes
 class Chofer(models.Model):
-	id = models.AutoField(primary_key = True)
 	nombre = models.CharField(max_length = 50, blank = False, null = False)
 	apellido = models.CharField(max_length = 50, blank = False, null = False)
-	ci_nro = models.CharField(max_length = 8, blank = False, null = False)
+	ci_nro = models.CharField(max_length = 8, blank = False, null = False, primary_key = True)
 	nacionalidad = models.CharField(max_length=10, choices=PAISES, default='PY')
 	observacion = models.TextField(blank = False, null = False)
 	empresa_id = models.ForeignKey(Empresa, on_delete = models.CASCADE)
