@@ -21,22 +21,28 @@ class Viaje_Incio(models.Model):
 	def __str__(self):
 		return str(self.id)
 
+
 class Bus_Datos(models.Model):
 	id = models.AutoField(primary_key = True)
-	viaje_inicio_id = models.ForeignKey(Viaje_Incio, on_delete = models.CASCADE)#identificador de viaje proveido por el servidor al raspberry
+	viaje_inicio = models.ForeignKey(Viaje_Incio, related_name = 'viaje_inicio', on_delete = models.CASCADE)#identificador de viaje proveido por el servidor al raspberry
+
 	time_rasp = models.DateTimeField(auto_now_add = False) #tiempo que provee el raspberry
 	time_created = models.DateTimeField(auto_now_add = True)#tiempo en el que se guarda en la base de datos
+	location_bus = models.PointField()#locacion del bus
+
 	siniestro_bus = models.BooleanField(default = False)#boton de siniestro en el bus
 	sensor_asiento = models.BooleanField(default = False)#sensor del asiento para personas con discapacidad
 	estado_viaje = models.CharField(max_length=10, choices=ESTADOS_VIAJE, default='PY')#identificador de viaje proveido por el servidor al raspberry
-	location_bus = models.PointField()#locacion del bus
+	
 
 	class Meta:
 		verbose_name = 'Bus_Dato'
 		verbose_name_plural = 'Bus_Datos'
-		ordering = ['viaje_inicio_id']
+		ordering = ['id']
 
 	def __str__(self):
-		return str(self.viaje_inicio_id)
+		return str(self.id)
+
+
 
 #agregar asiento especial, siniestro
