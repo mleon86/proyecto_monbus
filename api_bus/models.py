@@ -42,15 +42,6 @@ class Bus_Datos(models.Model):
 	def __str__(self):
 		return str(self.id)
 
-
-class Bus_Datos_Update_prueba(models.Model):
-	viaje_inicio = models.ForeignKey(Viaje_Incio, on_delete = models.CASCADE)#identificador de viaje proveido por el servidor al raspberry
-	time_rasp = models.DateTimeField(auto_now_add = False) #tiempo que provee el raspberry
-	location_bus = models.PointField()#locacion del bus
-
-
-
-
 #Seria la tabla que debe ir actualizandose conforme se generan los datos y solo se consultara de la siguiente tabla.	
 
 class Bus_Datos_Update(models.Model):
@@ -71,10 +62,3 @@ class Bus_Datos_Update(models.Model):
 
 	def __str__(self):
 		return str(self.viaje_inicio)
-
-
-
-
-class Bus_Datos_Prueba(models.Model):
-	id = models.AutoField(primary_key = True)
-	bus_datos_update_id = models.ForeignKey(Bus_Datos_Update, related_name = 'bus_datos_update', on_delete = models.CASCADE)

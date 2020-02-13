@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 
 PAISES=(('PY','Paraguaya'),('AR',"Argentina"),('BR','Brasilera'),('BO','Boliviana'),('PE',"Peruana"),('CH','Chilena'))
+TIPO_PARADA=(('T1','Tramo1'),('T2',"Tramo2"))
 
 # Create your models here.
 
@@ -55,7 +56,8 @@ class Parada(models.Model):
 	nombre = models.CharField(max_length = 10, blank = False, null = False, primary_key = True)
 	direccion = models.CharField(max_length = 100, blank = False, null = False)
 	location_parada = models.PointField()
-	Itinerarios_parada = models.ManyToManyField(Itinerario)
+	itinerarios_parada = models.ManyToManyField(Itinerario)
+	tipo_parada = models.CharField(max_length=10, choices=TIPO_PARADA, default='T1')
 
 	class Meta:
 		verbose_name = 'Parada'

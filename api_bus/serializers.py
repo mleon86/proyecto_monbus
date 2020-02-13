@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from .models import Bus_Datos, Viaje_Incio, Bus_Datos_Update, Bus_Datos_Prueba
+from .models import Bus_Datos, Viaje_Incio, Bus_Datos_Update
 from carga.models import RaspberryBus, Itinerario
 
 class Viaje_IncioSerializer(serializers.ModelSerializer):
@@ -19,7 +19,6 @@ class Bus_DatosSerializer(GeoFeatureModelSerializer):
 		model = Bus_Datos
 		geo_field = 'location_bus'
 		fields = '__all__'
-
 
 class  Bus_Datos_UpdateSerializer(serializers.ModelSerializer):
 	class Meta:
