@@ -4,21 +4,6 @@ PAISES=(('PY','Paraguaya'),('AR',"Argentina"),('BR','Brasilera'),('BO','Bolivian
 
 # Create your models here.
 
-#Datos de las Paradas
-class Parada(models.Model):
-	nombre = models.CharField(max_length = 10, blank = False, null = False, primary_key = True)
-	direccion = models.CharField(max_length = 100, blank = False, null = False)
-	location_parada = models.PointField()
-
-	class Meta:
-		verbose_name = 'Parada'
-		verbose_name_plural = 'Paradas'
-		ordering = ['nombre']
-
-	def __str__(self):
-		return self.nombre
-
-
 
 #Datos de las empresas
 class Empresa(models.Model):
@@ -64,6 +49,22 @@ class Itinerario(models.Model):
 
 	def __str__(self):
 		return self.nombre
+
+#Datos de las Paradas
+class Parada(models.Model):
+	nombre = models.CharField(max_length = 10, blank = False, null = False, primary_key = True)
+	direccion = models.CharField(max_length = 100, blank = False, null = False)
+	location_parada = models.PointField()
+	Itinerarios_parada = models.ManyToManyField(Itinerario)
+
+	class Meta:
+		verbose_name = 'Parada'
+		verbose_name_plural = 'Paradas'
+		ordering = ['nombre']
+
+	def __str__(self):
+		return self.nombre
+
 
 class Bus(models.Model):
 	marca = models.CharField(max_length = 50, blank = False, null = False)

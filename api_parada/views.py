@@ -11,19 +11,19 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Datos_Parada
 from carga.models import Parada
-from api_bus.models import Bus_Datos
+from api_bus.models import Bus_Datos_Update
 from .serializers import Datos_ParadaSerializer, Bus_DatosListSerializer
 
 # Create your views here.
-class Datos_ParadaSave(generics.CreateAPIView):
+class Datos_ParadaSave(generics.CreateAPIView): #Guarda los datos enviados por la Parada
 	permission_classes = (IsAuthenticated,)
 	serializer_class = Datos_ParadaSerializer
 
-class Datos_MapaList(APIView):
+class Datos_MapaList(APIView):#Lista los buses que estan en la tabla Bus_Datos_Update, que estan a 2 km de la posicion de la parada
 	permissions_classes = ()
 	def get(self, request, nombre):
 		parada = get_object_or_404(Parada, nombre = nombre)
 		geom = parada.location_parada
-		lista_buses = Bus_Datos.objects.filter(location_bus__distance_lt = (geom, D(km=2))) #filtra los buses que estan a 2km de distancia
+		lista_buses = Bus_Datos_Update.objects.filter(location_bus__distance_lt = (geom, D(km=2))) #filtra los buses que estan a 2km de distancia
 		data = Bus_DatosListSerializer(lista_buses, many = True).data
 		return Response(data)
