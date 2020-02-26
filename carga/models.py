@@ -65,7 +65,7 @@ class Parada(models.Model):
 		ordering = ['nombre']
 
 	def __str__(self):
-		return self.nombre
+		return str(self.nombre)
 
 
 class Bus(models.Model):
@@ -109,6 +109,7 @@ class RaspberryParada(models.Model):
 
 #Datos de los choferes
 class Chofer(models.Model):
+
 	nombre = models.CharField(max_length = 50, blank = False, null = False)
 	apellido = models.CharField(max_length = 50, blank = False, null = False)
 	ci_nro = models.CharField(max_length = 8, blank = False, null = False, primary_key = True)
@@ -123,4 +124,4 @@ class Chofer(models.Model):
 		ordering = ['ci_nro']
 
 	def __str__(self):
-		return self.nombre
+		return '%s %s %s' % (self.ci_nro, self.nombre, self.apellido)

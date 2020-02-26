@@ -11,21 +11,16 @@ from django.contrib.gis.db.models import functions
 
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Bus_Datos, Bus_Datos_Update
+from .models import Bus_Datos, Bus_Datos_Update, SolicAsiento
 from carga.models import RaspberryBus
-from .serializers import Bus_DatosSerializer, RaspberryBusSerializer, Viaje_IncioSerializer, Bus_Datos_UpdateSerializer
+from .serializers import Bus_DatosSerializer, RaspberryBusSerializer, Viaje_IncioSerializer, Bus_Datos_UpdateSerializer, SolicAsientoSerializer
 
 # Create your views here.
 
 class Viaje_Inicio_Id_Viaje(generics.CreateAPIView): #Crea los viaje_inicio
 	permission_classes = ()
 	serializer_class = Viaje_IncioSerializer
-	lookup_field = ('itinerario_id', 'chofer_id', 'raspberry_id')		
-
-class Bus_Datos_UpdateList(generics.ListAPIView):#Lista las datos de la tabla Bus_Datos_Update
-    permission_classes = ()
-    queryset = Bus_Datos_Update.objects.all()
-    serializer_class = Bus_Datos_UpdateSerializer
+	lookup_field = ('itinerario_id', 'chofer_id', 'raspberry_id')
 
 class Bus_DatosSave(generics.CreateAPIView): #Guarda los datos en la tabla Bus_Datos.
 	permission_classes = ()#(IsAuthenticated,)
@@ -54,6 +49,11 @@ class RaspberryBusConsulta(generics.RetrieveAPIView):
     queryset = RaspberryBus.objects.all()
     lookup_field = 'serial_rasp_bus'
 
+class PrepararAsiento(generics.RetrieveAPIView):
+    permission_classes = () #permisos quitados temporalmente para prueba de la vista
+    serializer_class = SolicAsientoSerializer
+    queryset = SolicAsiento.objects.all()
+    lookup_field = 'viaje_inicio'
 
 '''class Bus_Datos_Update(APIView):
     """
@@ -69,3 +69,7 @@ class RaspberryBusConsulta(generics.RetrieveAPIView):
 
 '''
 
+#preparacion para asiento
+'''
+
+'''

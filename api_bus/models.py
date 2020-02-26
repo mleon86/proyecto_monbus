@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-from carga.models import Itinerario, Chofer, RaspberryBus
+from carga.models import Itinerario, Chofer, RaspberryBus, Parada
 
 ESTADOS_VIAJE=(('T1','Tramo1'),('T2',"Tramo2"),('I','Intermedio'))
 
@@ -59,6 +59,20 @@ class Bus_Datos_Update(models.Model):
 		verbose_name = 'Bus_Datos_Update'
 		verbose_name_plural = 'Bus_Datos_Updates'
 		ordering = ['viaje_inicio']
+
+	def __str__(self):
+		return str(self.viaje_inicio)
+
+
+class SolicAsiento(models.Model):
+	viaje_inicio = models.OneToOneField(Viaje_Incio, related_name = 'viaje_inicio_solic_asiento', on_delete = models.CASCADE, primary_key = True)
+	time_solic = models.DateTimeField(auto_now_add = False)
+	parada = models.ForeignKey(Parada, related_name = 'nombre_parada_solic_asiento', on_delete = models.CASCADE)#identificador de la parada, el cual sera un  proveido por el servidor al raspberry
+	
+	class Meta:
+		 verbose_name = 'SolicAsiento'
+		 verbose_name_plural = 'Solicitudes de Asiento'
+		 ordering = ['time_solic']
 
 	def __str__(self):
 		return str(self.viaje_inicio)

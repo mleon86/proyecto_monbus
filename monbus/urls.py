@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api_parada/',include('api_parada.urls')),
     path('api_bus/', include('api_bus.urls')),
+    path('usuarios/', include('usuarios.urls')),
 
     #para obtension de los token
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -17,5 +17,5 @@ class Datos_Parada(models.Model):
 		ordering = ['nombre_parada']
 
 	def __str__(self):
-		return self.nombre_parada
+		return str(self.nombre_parada)
 #Los datos que se recibiran de la parada

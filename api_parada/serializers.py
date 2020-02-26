@@ -20,7 +20,7 @@ class Viaje_InicioListSerializer(serializers.ModelSerializer):
 		model = Viaje_Incio
 		fields = ['itinerario_id']
 
-class Bus_DatosListSerializer(GeoFeatureModelSerializer):
+class Bus_Datos_UpdateListSerializer(GeoFeatureModelSerializer):
 	viaje_inicio = Viaje_InicioListSerializer(read_only = True)
 	class Meta:
 		model = Bus_Datos
