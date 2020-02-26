@@ -8,6 +8,7 @@ asgiref==3.2.3
 certifi==2019.11.28
 chardet==3.0.4
 Django==3.0.1
+django-cors-headers==3.2.1
 djangorestframework==3.11.0
 djangorestframework-gis==0.15
 djangorestframework-simplejwt==4.4.0
