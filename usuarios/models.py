@@ -12,9 +12,9 @@ class Usuario(models.Model):
 	class Meta:
 		verbose_name = 'Usuario'
 		verbose_name_plural = 'Usuarios'
-		ordering = ['ci_nro']
+		ordering = ['usuario']
 
 	def __str__(self):
-		return str(self.ci_nro)
+		return '%s %s' % (self.usuario, self.ci_nro)
 
 # Create your models here.

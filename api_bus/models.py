@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models
 from carga.models import Itinerario, Chofer, RaspberryBus, Parada
 
-ESTADOS_VIAJE=(('T1','Tramo1'),('T2',"Tramo2"),('I','Intermedio'))
+ESTADOS_VIAJE=(('T1','Tramo1'),('T2',"Tramo2"),('I','Intermedio'), ('P', 'Preparado'))
 
 # Create your models here.
 
@@ -45,7 +45,7 @@ class Bus_Datos(models.Model):
 #Seria la tabla que debe ir actualizandose conforme se generan los datos y solo se consultara de la siguiente tabla.	
 
 class Bus_Datos_Update(models.Model):
-	viaje_inicio = models.OneToOneField(Viaje_Incio, related_name = 'viaje_inicio', on_delete = models.CASCADE, primary_key = True)#identificador de viaje proveido por el servidor al raspberry
+	viaje_inicio = models.OneToOneField(Viaje_Incio, related_name = 'viaje_inicio_bus_datos_update', on_delete = models.CASCADE, primary_key = True)#identificador de viaje proveido por el servidor al raspberry
 
 	time_rasp = models.DateTimeField(auto_now_add = False) #tiempo que provee el raspberry
 	time_created = models.DateTimeField(auto_now_add = True)#tiempo en el que se guarda en la base de datos
@@ -64,15 +64,4 @@ class Bus_Datos_Update(models.Model):
 		return str(self.viaje_inicio)
 
 
-class SolicAsiento(models.Model):
-	viaje_inicio = models.OneToOneField(Viaje_Incio, related_name = 'viaje_inicio_solic_asiento', on_delete = models.CASCADE, primary_key = True)
-	time_solic = models.DateTimeField(auto_now_add = False)
-	parada = models.ForeignKey(Parada, related_name = 'nombre_parada_solic_asiento', on_delete = models.CASCADE)#identificador de la parada, el cual sera un  proveido por el servidor al raspberry
-	
-	class Meta:
-		 verbose_name = 'SolicAsiento'
-		 verbose_name_plural = 'Solicitudes de Asiento'
-		 ordering = ['time_solic']
 
-	def __str__(self):
-		return str(self.viaje_inicio)

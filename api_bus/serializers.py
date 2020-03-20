@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from .models import Bus_Datos, Viaje_Incio, Bus_Datos_Update, SolicAsiento
-from carga.models import RaspberryBus, Itinerario
+from .models import Bus_Datos, Viaje_Incio, Bus_Datos_Update
+from carga.models import RaspberryBus, Itinerario, Bus
 
 class Viaje_IncioSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -27,11 +27,10 @@ class  Bus_Datos_UpdateSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
-class  SolicAsientoSerializer(serializers.ModelSerializer):
+class ItinerariosSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = SolicAsiento
-		fields = '__all__'
-
+		model = Itinerario
+		fields = ['nombre']
 	
 
 '''	def update(self, instance, validated_data):
@@ -42,15 +41,16 @@ class  SolicAsientoSerializer(serializers.ModelSerializer):
 		Bus_Datos_Update_prueba.save()
 		return instance'''
 
-
-
+class BusSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Bus
+		fields = ['chapa','empresa_id','linea_id']
 
 class RaspberryBusSerializer(serializers.ModelSerializer):
+	bus_id = BusSerializer(read_only = True)
 	class Meta:
 		model = RaspberryBus
-		fields = '__all__'
-
-
+		fields = ['serial_rasp_bus','bus_id']
 '''
 
 class BusDatosSerializer(serializers.ModelSerializer):

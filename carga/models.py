@@ -73,6 +73,7 @@ class Bus(models.Model):
 	modelo = models.CharField(max_length = 50, blank = False, null = False)
 	chapa = models.CharField(max_length = 8, blank = False, null = False, primary_key = True)
 	empresa_id = models.ForeignKey(Empresa, on_delete = models.CASCADE)
+	linea_id = models.ForeignKey(Linea, on_delete = models.CASCADE)
 	
 	class Meta:
 		verbose_name = 'Bus'
@@ -80,11 +81,11 @@ class Bus(models.Model):
 		ordering = ['chapa', 'empresa_id']
 
 	def __str__(self):
-		return self.chapa
+		return str(self.chapa)
 
 class RaspberryBus(models.Model):
 	serial_rasp_bus = models.CharField(max_length = 50, blank = False, null = False, primary_key = True)
-	bus_id = models.OneToOneField(Bus, on_delete = models.CASCADE)
+	bus_id = models.OneToOneField(Bus, related_name = 'bus_id', on_delete = models.CASCADE)
 
 	class Meta:
 		verbose_name = 'RaspberryBus'
@@ -92,19 +93,19 @@ class RaspberryBus(models.Model):
 		ordering = ['serial_rasp_bus']
 
 	def __str__(self):
-		return self.serial_rasp_bus
+		return str(self.serial_rasp_bus)
 
 class RaspberryParada(models.Model):
-	serial = models.CharField(max_length = 50, blank = False, null = False, primary_key = True)
+	serial_rasp_parada = models.CharField(max_length = 50, blank = False, null = False, primary_key = True)
 	parada_id = models.OneToOneField(Parada, on_delete = models.CASCADE)
 
 	class Meta:
 		verbose_name = 'RaspberryParada'
 		verbose_name_plural = 'RaspberrysParadas'
-		ordering = ['serial']
+		ordering = ['serial_rasp_parada']
 
 	def __str__(self):
-		return self.serial
+		return '%s %s' %(self.serial_rasp_parada, self.parada_id)
 
 
 #Datos de los choferes
