@@ -1,4 +1,12 @@
 #from django.shortcuts import render
+from django.utils import timezone
+from django.http import Http404
+from django.db.models import F
+
+from django.shortcuts import get_object_or_404
+from django.contrib.gis.measure import D
+from django.contrib.gis.db.models import functions
+
 from rest_framework import generics
 from rest_framework import status
 
@@ -6,18 +14,13 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from django.shortcuts import get_object_or_404
-from django.contrib.gis.measure import D
-from django.contrib.gis.db.models import functions
 
 from rest_framework.permissions import IsAuthenticated
 
-from django.db.models import F
-
-from .models import Datos_Parada, SolicAsiento
+from .models import Datos_Parada, SolicAsiento, SolicAsientoConsulta
 from carga.models import Parada, RaspberryParada
 from api_bus.models import Bus_Datos_Update, Viaje_Incio
-from .serializers import Datos_ParadaSerializer, Bus_Datos_UpdateListSerializer, ParadaSerializer, RaspberryParadaSerializer, SolicAsientoSerializer
+from .serializers import Datos_ParadaSerializer, Bus_Datos_UpdateListSerializer, ParadaSerializer, RaspberryParadaSerializer, SolicAsientoSerializer, SolicAsientoConsultaSerializer
 
 
 from datetime import datetime
@@ -38,7 +41,7 @@ class Info_Parada(generics.RetrieveAPIView):
     lookup_field = 'nombre'
 
 class Datos_ParadaSave(generics.CreateAPIView): #Guarda los datos enviados por la Parada
-	permission_classes = (IsAuthenticated,)
+	permission_classes = ()#IsAuthenticated,
 	serializer_class = Datos_ParadaSerializer
 
 
@@ -53,11 +56,68 @@ class Solic_Asiento(APIView):
 		location_parada = parada.location_parada#la locacion de la parada para hacer el calculo de distancia
 		lista_buses_a_notificar = Bus_Datos_Update.objects.filter(sensor_asiento = False).filter(estado_viaje = tipo_parada).filter(viaje_inicio__itinerario_id__in = (itinerarios_parada)).filter(location_bus__distance_lt = (location_parada, D(km=2)))
 
-		data = Bus_Datos_UpdateListSerializer(lista_buses_a_notificar, many = True).data
+		dataSolicAsientoUpdateListCreate = Bus_Datos_UpdateListSerializer(lista_buses_a_notificar, many = True).data
 		return Response(data)
 
 	def post(self, request, nombre, ):
 		estado_solicitud = request.data["estado_solicitud"]
+		parada = get_object_or_404(Parada, nombre = nombre)
+		#tomamos los datos de la parada que nos van a ayudar a filtrar los buses
+		itinerarios_parada = parada.itinerarios_parada.all() #itinerarios que pasan por esa parada
+		tipo_parada = parada.tipo_parada#direccion que siguen los buses que pasan por esa parada, si es ida o vuelta
+		#La ida y vuelta, equivaldria a tramo1 o tramo 2...
+		location_parada = parada.location_parada#la locacion de la parada para hacer el calculo de distancia
+		solic_asiento = SolicAsiento.objects.create(parada = Parada.objects.get(nombre = parada.nombre), time_solic = timezone.now(), estado_solicitud = estado_solicitud)
+		buses_a_notificar = Bus_Datos_Update.objects.filter(sensor_asiento = False).filter(estado_viaje = tipo_parada).filter(viaje_inicio__itinerario_id__in = (itinerarios_parada)).filter(location_bus__distance_lt = (location_parada, D(km=2)))
+		for bus in buses_a_notificar:
+			solic_asiento.viajes_inicios.add(Viaje_Incio.objects.get(id = str(bus.viaje_inicio)))
+		#print(buses_a_notificar.values_list('viaje_inicio', flat = True))
+
+		data = SolicAsientoSerializer(solic_asiento).data
+
+		return Response(data)
+
+
+class SolicAsientoUpdateListCreate(APIView):
+	permissions_classes = ()
+	def get(self, request):
+		solic_asiento_consulta = SolicAsientoConsulta.objects.all()
+		serializer = SolicAsientoConsultaSerializer(solic_asiento_consulta, many = True)
+		return Response(serializer.data)
+
+	def post(self, request,):
+		
+		parada = get_object_or_404(Parada, nombre = request.data['parada'])
+		print(parada)
+		#tomamos los datos de la parada que nos van a ayudar a filtrar los buses
+		itinerarios_parada = parada.itinerarios_parada.all() #itinerarios que pasan por esa parada
+		tipo_parada = parada.tipo_parada#direccion que siguen los buses que pasan por esa parada, si es ida o vuelta
+		#La ida y vuelta, equivaldria a tramo1 o tramo 2...
+		location_parada = parada.location_parada#la locacion de la parada para hacer el calculo de distancia
+		
+		solic_asiento_consulta = SolicAsientoConsulta.objects.create(parada = Parada.objects.get(nombre = parada.nombre), time_solic = request.data['time_solic'])
+		buses_a_notificar = Bus_Datos_Update.objects.filter(sensor_asiento = False).filter(estado_viaje = tipo_parada).filter(viaje_inicio__itinerario_id__in = (itinerarios_parada)).filter(location_bus__distance_lt = (location_parada, D(km=2)))
+		for bus in buses_a_notificar:
+			solic_asiento_consulta.viajes_inicios.add(Viaje_Incio.objects.get(id = str(bus.viaje_inicio)))
+		solic_asiento_consulta.save()
+
+		serializer = SolicAsientoConsultaSerializer(solic_asiento_consulta)
+		return Response(serializer.data, status=status.HTTP_201_CREATED)
+		#return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class SolicAsientoUpdateDetail(APIView):
+	permissions_classes = ()
+
+	def get(self, request, nombre, ):
+		try:
+			solic_asiento_consulta = SolicAsientoConsulta.objects.get(parada = nombre)
+			serializer = SolicAsientoConsultaSerializer(solic_asiento_consulta)
+			return Response(serializer.data)
+		except SolicAsientoConsulta.DoesNotExist:
+			raise Http404
+		
+
+	def put(self, request, nombre, ):
 
 		parada = get_object_or_404(Parada, nombre = nombre)
 		#tomamos los datos de la parada que nos van a ayudar a filtrar los buses
@@ -65,44 +125,27 @@ class Solic_Asiento(APIView):
 		tipo_parada = parada.tipo_parada#direccion que siguen los buses que pasan por esa parada, si es ida o vuelta
 		#La ida y vuelta, equivaldria a tramo1 o tramo 2...
 		location_parada = parada.location_parada#la locacion de la parada para hacer el calculo de distancia
-
-		solic_asiento = SolicAsiento.objects.create(parada = Parada.objects.get(nombre = parada.nombre), time_solic = datetime.now(), estado_solicitud = estado_solicitud)
-	
 		buses_a_notificar = Bus_Datos_Update.objects.filter(sensor_asiento = False).filter(estado_viaje = tipo_parada).filter(viaje_inicio__itinerario_id__in = (itinerarios_parada)).filter(location_bus__distance_lt = (location_parada, D(km=2)))
-		for bus in buses_a_notificar:
-			solic_asiento.viajes_inicios.add(Viaje_Incio.objects.get(id = str(bus.viaje_inicio)))
-		#print(buses_a_notificar.values_list('viaje_inicio', flat = True))
-		
-		solic_asiento.save()
+		try:
+			solic_asiento_consulta = SolicAsientoConsulta.objects.get(parada = parada)
+			for bus in buses_a_notificar:
+				solic_asiento_consulta.viajes_inicios.add(Viaje_Incio.objects.get(id = str(bus.viaje_inicio)))
 
-		data = SolicAsientoSerializer(solic_asiento).data
-
+			serializer = SolicAsientoConsultaSerializer(solic_asiento_consulta, data=request.data)
+			if serializer.is_valid():
+				serializer.save()
+				return Response(serializer.data)
+		except SolicAsientoConsulta.DoesNotExist:
+			raise Http404
+		'''
+		data = SolicAsientoConsultaSerializer(solic_asiento_consulta).data
 		return Response(data)
+		'''
 
-
-class BorrarSolicAsiento(APIView):
-	permissions_classes = ()
-
-	def get(self, request, parada):
-		solics_asiento_a_borrar = SolicAsiento.objects.filter(parada = parada)
-		data = SolicAsientoSerializer(solics_asiento_a_borrar, many = True).data
-		return Response(data)
-
-	def delete(self, request, parada):
-		solics_asiento_a_borrar = SolicAsiento.objects.filter(parada = parada)
-		print(solics_asiento_a_borrar)
-
-		for e in solics_asiento_a_borrar:
-			e.delete()
-
-		return Response(status = status.HTTP_204_NO_CONTENT)
-
-"""    def delete(self, request, parada, format=None):
-        snippet = self.get_object(parada)
-        snippet.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)"""
-
-
+	def delete(self, request, nombre, ):
+		solic_asiento_consulta = SolicAsientoConsulta.objects.get(parada = nombre)
+		solic_asiento_consulta.delete()
+		return Response(status=status.HTTP_204_NO_CONTENT)
 	
 
 #buses a mostrar en el mapa

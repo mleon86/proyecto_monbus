@@ -13,10 +13,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Bus_Datos, Bus_Datos_Update
 from carga.models import RaspberryBus, Itinerario
-from api_parada.models import SolicAsiento
-from .serializers import Bus_DatosSerializer, RaspberryBusSerializer, Viaje_IncioSerializer, Bus_Datos_UpdateSerializer, ItinerariosSerializer
-from api_parada.serializers import SolicAsientoSerializer
-
+from api_parada.models import SolicAsientoConsulta
+from .serializers import Bus_DatosSerializer, RaspberryBusSerializer, Viaje_IncioSerializer, Bus_Datos_UpdateSerializer, ItinerariosSerializer, BusConsultaAsientoSerializer
 # Create your views here.
 
 class Viaje_Inicio_Id_Viaje(generics.CreateAPIView): #Crea los viaje_inicio
@@ -55,11 +53,12 @@ class RaspberryBusConsulta(generics.RetrieveAPIView):
     queryset = RaspberryBus.objects.all()
     lookup_field = 'serial_rasp_bus'
 
-class PrepararAsiento(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticated,) #permisos quitados temporalmente para prueba de la vista
-    serializer_class = SolicAsientoSerializer
-    queryset = SolicAsiento.objects.all()
-    lookup_field = 'viaje_inicio'
+class PrepararAsiento(APIView):
+    permissions_classes = (IsAuthenticated,)
+    def get(self, request, viaje_inicio):
+        solic_asiento_consulta = SolicAsientoConsulta.objects.filter(viajes_inicios = viaje_inicio)
+        serializer = BusConsultaAsientoSerializer(solic_asiento_consulta, many = True)
+        return Response(serializer.data)
 
 class ConsultaItinerario(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
@@ -67,23 +66,3 @@ class ConsultaItinerario(generics.ListAPIView):
     def get_queryset(self):
         linea_id = self.kwargs['linea_id']
         return Itinerario.objects.filter(linea_id = linea_id)
-
-
-'''class Bus_Datos_Update(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
-    def put(self, request, viaje_inicio):
-        bus_a_actualizar = self.get_object(viaje_inicio)
-        serializer = Bus_Datos_UpdateSerializer(bus_a_actualizar, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-'''
-
-#preparacion para asiento
-'''
-
-'''
