@@ -54,3 +54,18 @@ class SolicAsientoConsulta(models.Model):
 
 	def __str__(self):
 		return '%s %s %s' %(self.parada, self.time_solic, self.viajes_inicios)
+
+
+class Siniestro(models.Model):
+	id = models.AutoField(primary_key = True)
+	parada = models.ForeignKey(Parada, on_delete = models.CASCADE, )#identificador de la parada, el cual sera un  proveido por el servidor al raspberry
+	time_solic = models.DateTimeField(auto_now_add = False)
+	estado_solicitud = models.CharField(max_length=10, choices=ESTADOS_SOLICITUD_ASIENTO, default='I')# enviado por el raspberry
+
+	class Meta:
+		verbose_name = 'SiniestroParada'
+		verbose_name_plural = 'Siniestros'
+		ordering = ['time_solic']
+
+	def __str__(self):
+		return '%s %s %s %s' %(self.id, self.parada, self.time_solic, self.estado_solicitud)

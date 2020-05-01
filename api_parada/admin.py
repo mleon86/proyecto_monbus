@@ -1,11 +1,13 @@
 from django.contrib.gis import admin
 from django.contrib.gis.admin import OSMGeoAdmin
 
-from .models import Datos_Parada, SolicAsiento, SolicAsientoConsulta
+from .models import Datos_Parada, SolicAsiento, SolicAsientoConsulta, Siniestro
 
 @admin.register(Datos_Parada)
 @admin.register(SolicAsiento)
 @admin.register(SolicAsientoConsulta)
+@admin.register(Siniestro)
+
 
 class Datos_ParadaAdmin(OSMGeoAdmin):
 	default_lon = -6403019.37589
