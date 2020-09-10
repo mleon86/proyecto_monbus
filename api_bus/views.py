@@ -2,8 +2,10 @@
 
 from rest_framework import generics
 from rest_framework.views import APIView
+from django.http import Http404
 
 from rest_framework.response import Response
+from rest_framework import status
 from django.shortcuts import get_object_or_404
 
 from django.contrib.gis.measure import D
@@ -11,10 +13,10 @@ from django.contrib.gis.db.models import functions
 
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Bus_Datos, Bus_Datos_Update
+from .models import Bus_Datos, Bus_Datos_Update, Viaje_Incio, SiniestroBus
 from carga.models import RaspberryBus, Itinerario
 from api_parada.models import SolicAsientoConsulta
-from .serializers import Bus_DatosSerializer, RaspberryBusSerializer, Viaje_IncioSerializer, Bus_Datos_UpdateSerializer, ItinerariosSerializer, BusConsultaAsientoSerializer
+from .serializers import Bus_DatosSerializer, RaspberryBusSerializer, Viaje_IncioSerializer, Bus_Datos_UpdateSerializer, ItinerariosSerializer, BusConsultaAsientoSerializer, SiniestroBusSerializer
 # Create your views here.
 
 class Viaje_Inicio_Id_Viaje(generics.CreateAPIView): #Crea los viaje_inicio
@@ -66,3 +68,23 @@ class ConsultaItinerario(generics.ListAPIView):
     def get_queryset(self):
         linea_id = self.kwargs['linea_id']
         return Itinerario.objects.filter(linea_id = linea_id)
+
+class SiniestroBusListCreate(APIView): #Listar y crear SolicAsientoUpdate
+    permissions_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        siniestro = SiniestroBus.objects.all()
+        serializer = SiniestroBusSerializer(siniestro, many = True)
+        return Response(serializer.data)
+
+    def post(self, request,):
+        print(request.data)
+        if request.data['siniestro_bus']=='A':
+            print("Pedido de Auxilio", request.data['viaje_inicio'])
+        bus_datos_siniestro = get_object_or_404(Bus_Datos_Update, viaje_inicio = request.data['viaje_inicio'])
+        print(bus_datos_siniestro.viaje_inicio)
+        print(bus_datos_siniestro.location_bus)
+        siniestrobus = SiniestroBus.objects.create(viaje_inicio = Viaje_Incio.objects.get(id = bus_datos_siniestro.viaje_inicio.id), time_solic = request.data['time_solic'], estado_solicitud = request.data['siniestro_bus'])
+
+        serializer = SiniestroBusSerializer(siniestrobus)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

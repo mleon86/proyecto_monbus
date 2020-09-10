@@ -6,6 +6,7 @@ from api_bus.models import Viaje_Incio, Bus_Datos_Update
 # Create your models here.
 
 ESTADOS_SOLICITUD_ASIENTO=(('I','INACTIVO'),('A',"ACTIVO"))
+ESTADO_SINIESTRO=(('I','INACTIVO'),('A',"ACTIVO"))
 
 
 class Datos_Parada(models.Model):
@@ -60,7 +61,7 @@ class Siniestro(models.Model):
 	id = models.AutoField(primary_key = True)
 	parada = models.ForeignKey(Parada, on_delete = models.CASCADE, )#identificador de la parada, el cual sera un  proveido por el servidor al raspberry
 	time_solic = models.DateTimeField(auto_now_add = False)
-	estado_solicitud = models.CharField(max_length=10, choices=ESTADOS_SOLICITUD_ASIENTO, default='I')# enviado por el raspberry
+	estado_solicitud = models.CharField(max_length=10, choices=ESTADO_SINIESTRO, default='I')# enviado por el raspberry
 
 	class Meta:
 		verbose_name = 'SiniestroParada'

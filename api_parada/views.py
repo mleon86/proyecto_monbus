@@ -243,9 +243,9 @@ class SiniestroListCreate(APIView): #Listar y crear SolicAsientoUpdate
 		serializer = SiniestroSerializer(siniestro, many = True)
 		return Response(serializer.data)
 
-
 	def post(self, request,):
-		
+		if(request.data['estado_solicitud']=='A'):
+			print("Pedido de Auxilio", request.data['parada'])
 		parada = get_object_or_404(Parada, nombre = request.data['parada'])
 		siniestro = Siniestro.objects.create(parada = Parada.objects.get(nombre = parada.nombre), time_solic = request.data['time_solic'], estado_solicitud = request.data['estado_solicitud'])
 		serializer = SiniestroSerializer(siniestro)

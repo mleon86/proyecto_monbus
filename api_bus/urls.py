@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
 
-from .views import Bus_DatosSave, RaspberryBusConsulta, Viaje_Inicio_Id_Viaje, Bus_DatosUpdate, Bus_DatosUpdateCreate, PrepararAsiento, ConsultaItinerario
+from .views import Bus_DatosSave, RaspberryBusConsulta, Viaje_Inicio_Id_Viaje, Bus_DatosUpdate, Bus_DatosUpdateCreate, PrepararAsiento, ConsultaItinerario, SiniestroBusListCreate
 
 urlpatterns = [
 	path('datos_bus_save/', Bus_DatosSave.as_view(), name = 'datos_bus_save'),#historico
@@ -10,6 +10,8 @@ urlpatterns = [
 	path('datos_rasp_consulta/<serial_rasp_bus>/', RaspberryBusConsulta.as_view(), name = 'datos_rasp_consulta'),
 	path('inicio_viaje/', Viaje_Inicio_Id_Viaje.as_view(), name = 'inicio_viaje'),
 	path('preparar_asiento/<viaje_inicio>/', PrepararAsiento.as_view(), name = 'preparar_asiento'),
-	path('consulta_itinerario/<linea_id>/', ConsultaItinerario.as_view(), name = 'consulta_itinerario')
+	path('consulta_itinerario/<linea_id>/', ConsultaItinerario.as_view(), name = 'consulta_itinerario'),
+	path('siniestro_bus/', SiniestroBusListCreate.as_view(), name = 'siniestro_bus_list_create'),
+
 	#preparacion_para_asiento
 	]

@@ -1,9 +1,10 @@
 from django.contrib.gis import admin
 from django.contrib.gis.admin import OSMGeoAdmin
 
-from .models import Bus_Datos, Bus_Datos_Update, Viaje_Incio
+from .models import Bus_Datos, Bus_Datos_Update, Viaje_Incio, SiniestroBus
 
 @admin.register(Viaje_Incio)
+@admin.register(SiniestroBus)
 
 @admin.register(Bus_Datos)
 class Bus_DatosAdmin(OSMGeoAdmin):

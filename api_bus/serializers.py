@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from .models import Bus_Datos, Viaje_Incio, Bus_Datos_Update
+from .models import Bus_Datos, Viaje_Incio, Bus_Datos_Update, SiniestroBus
 from carga.models import RaspberryBus, Itinerario, Bus
 from api_parada.models import SolicAsientoConsulta
 
@@ -58,7 +58,10 @@ class BusConsultaAsientoSerializer(serializers.ModelSerializer):
 		model = SolicAsientoConsulta
 		fields = ['parada', 'time_solic']
 
-
+class  SiniestroBusSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = SiniestroBus
+		fields = '__all__'
 
 
 '''
